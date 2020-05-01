@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CalculateTip{
+struct TipModel{
     
     func getBill(from billValue: String?) -> Float{
         if let billValue = billValue{

@@ -14,24 +14,18 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var zeroPctBtn: UIButton!
     @IBOutlet weak var tenPctBtn: UIButton!
     @IBOutlet weak var twentyPctBtn: UIButton!
-
     @IBOutlet weak var numberOfPeople: UILabel!
     @IBOutlet weak var stepper: UIStepper!
     
-    var selectedPct: Float = 0.00
-    var billValue: Float = 0.00
-    var splitNumber: Float = 2.0
-    var tipTotal: Float = 0.00
+    var selectedPct:Float    = 0.00
+    var billValue:Float      = 0.00
+    var splitNumber:Float    = 2.0
+    var tipTotal:Float       = 0.00
 
-    var calculateTip = CalculateTip()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        deselectAllBTn()
-    }
+    var tip = TipModel()
     
     func updateStepperValue(){
-        splitNumber = Float(calculateTip.getSplitNumber(from: stepper.value))
+        splitNumber         = Float(tip.getSplitNumber(from: stepper.value))
         numberOfPeople.text = String(format: "%.0f", splitNumber )
     }
     
@@ -44,7 +38,7 @@ class CalculatorViewController: UIViewController {
     @IBAction func tipChanged(_ sender: UIButton) {
         deselectAllBTn()
         sender.isSelected = true
-        selectedPct = calculateTip.getPercentage(from: sender.currentTitle)
+        selectedPct       = tip.getPercentage(from: sender.currentTitle)
         billTextField.endEditing(true)
    }
    
@@ -54,20 +48,21 @@ class CalculatorViewController: UIViewController {
    }
    
    @IBAction func calculatePressed(_ sender: UIButton) {
-        billValue = calculateTip.getBill(from: billTextField.text)
-        tipTotal =  calculateTip.calculateWith(percentage: selectedPct, billAmount: billValue, splitWith: splitNumber)
+        billValue   = tip.getBill(from: billTextField.text)
+        tipTotal    = tip.calculateWith(percentage: selectedPct,
+                                        billAmount: billValue,
+                                        splitWith: splitNumber)
     
     self.performSegue(withIdentifier: "performCalculation", sender: self)
     
    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         if segue.identifier == "performCalculation" {
-            let resultsVC = segue.destination as! ResultsViewController
-            resultsVC.tipTotal = String(tipTotal)
-            resultsVC.splitWith = String(format: "%.0f", splitNumber)
-            resultsVC.percent = String(format: "%.0f", selectedPct * 100)
+            let resultsVC        = segue.destination as! ResultsViewController
+            resultsVC.tipTotal   = String(tipTotal)
+            resultsVC.splitWith  = String(format: "%.0f", splitNumber)
+            resultsVC.percent    = String(format: "%.0f", selectedPct * 100)
         }
     }
 }
